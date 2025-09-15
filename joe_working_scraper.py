@@ -276,9 +276,13 @@ class JOEWorkingScraper:
             if downloaded_file:
                 # Rename with metadata
                 year = period.split(",")[1].strip().split("-")[0].strip()
-                section_name = self.SECTIONS.get(section_value, "all") if section_value else "all"
-                section_name = section_name.replace(":", "").replace(" ", "_")
-                new_name = f"joe_{year}_{section_name}.xlsx"
+                if section_value:
+                    section_name = self.SECTIONS.get(section_value, "unknown")
+                    section_name = section_name.replace(":", "").replace(" ", "_")
+                    new_name = f"joe_{year}_{section_name}.xlsx"
+                else:
+                    # No section filter means all sections
+                    new_name = f"joe_{year}_all_sections.xlsx"
                 final_path = self.download_dir / new_name
                 
                 # Move from temp to final location, overwriting if exists
@@ -321,10 +325,10 @@ class JOEWorkingScraper:
         
         Args:
             years: Number of years to download
-            sections: List of section values to download (default: ["1", "5"])
+            sections: List of section values to download (default: [None] for all sections)
         """
         if sections is None:
-            sections = ["1", "5"]  # US and International Academic
+            sections = [None]  # None means download ALL sections in one file
         
         periods = self.DATE_PERIODS[:years]
         results = []
@@ -338,7 +342,7 @@ class JOEWorkingScraper:
             for period in periods:
                 for section_value in sections:
                     current += 1
-                    section_name = self.SECTIONS.get(section_value, section_value)
+                    section_name = self.SECTIONS.get(section_value, "All Sections") if section_value else "All Sections"
                     
                     logger.info(f"\n{'='*60}")
                     logger.info(f"Downloading {current}/{total}: {period} - {section_name}")
@@ -384,17 +388,17 @@ class JOEWorkingScraper:
         try:
             self.setup_driver()
             
-            # Test with current period, US Academic
+            # Test with current period, ALL sections
             period = self.DATE_PERIODS[0]
-            section_value = "1"  # US Academic
+            section_value = None  # None means ALL sections
             
             logger.info("="*60)
             logger.info("TESTING DOWNLOAD")
             logger.info(f"Period: {period}")
-            logger.info(f"Section: {self.SECTIONS.get(section_value)}")
+            logger.info(f"Section: ALL SECTIONS")
             logger.info("="*60)
             
-            file_path = self.download_data(period, section_value)
+            file_path = self.download_data(period, section_value=None)
             
             if file_path:
                 logger.info(f"\n✅ TEST SUCCESSFUL!")

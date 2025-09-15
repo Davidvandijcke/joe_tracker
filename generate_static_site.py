@@ -336,8 +336,7 @@ def generate_html():
             <h1>JOE Market Tracker</h1>
             <p class="subtitle">Track job openings for economists from AEA JOE listings</p>
             <div class="automation-note">
-                <strong>Automated Updates:</strong> This site automatically refreshes data every Friday at 5:00 PM EST via GitHub Actions. 
-                The scraper runs on GitHub's infrastructure, downloads the latest JOE listings, and updates the visualizations without manual intervention.
+                <strong>Automated Updates:</strong> This site automatically refreshes data every Friday at 5:00 PM EST.
             </div>
             <div class="update-info" id="updateInfo">Loading...</div>
         </header>
@@ -370,8 +369,8 @@ def generate_html():
         </div>
         
         <footer>
-            <p>Data source: <a href="https://www.aeaweb.org/joe" target="_blank">AEA JOE</a></p>
-            <p>View source on <a href="https://github.com/yourusername/joe-tracker" target="_blank">GitHub</a></p>
+            <p>Data source: <a href="https://www.aeaweb.org/joe/listings" target="_blank">AEA JOE</a></p>
+            <p>View source on <a href="https://github.com/Davidvandijcke/joe_tracker" target="_blank">GitHub</a></p>
         </footer>
     </div>
     
