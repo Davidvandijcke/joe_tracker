@@ -478,6 +478,17 @@ def generate_html():
                 }
             });
             
+            // Calculate average openings per year
+            const avgPerYear = selectedYears.length > 0 ? Math.round(totalOpenings / selectedYears.length) : 0;
+            
+            // Get current year's openings if selected
+            const currentYear = new Date().getFullYear();
+            const currentAcademicYear = new Date().getMonth() >= 7 ? currentYear : currentYear - 1;
+            let currentYearOpenings = 0;
+            if (selectedYears.includes(currentAcademicYear) && sectionData[currentAcademicYear]) {
+                currentYearOpenings = sectionData[currentAcademicYear].total;
+            }
+            
             // Update metrics
             const metricsHtml = `
                 <div class="metric-card">
@@ -489,12 +500,12 @@ def generate_html():
                     <div class="metric-label">Total Postings</div>
                 </div>
                 <div class="metric-card">
-                    <div class="metric-value">${totalPostings > 0 ? (totalOpenings/totalPostings).toFixed(2) : 'N/A'}</div>
-                    <div class="metric-label">Avg per Posting</div>
+                    <div class="metric-value">${avgPerYear.toLocaleString()}</div>
+                    <div class="metric-label">Avg Openings/Year</div>
                 </div>
                 <div class="metric-card">
-                    <div class="metric-value">${selectedYears.length}</div>
-                    <div class="metric-label">Years Selected</div>
+                    <div class="metric-value">${currentYearOpenings > 0 ? currentYearOpenings.toLocaleString() : 'N/A'}</div>
+                    <div class="metric-label">${currentAcademicYear} Openings</div>
                 </div>
             `;
             document.getElementById('metrics').innerHTML = metricsHtml;

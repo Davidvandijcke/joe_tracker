@@ -48,3 +48,8 @@ test_*.py
 # Downloads
 downloads/
 download_*.py
+
+# Documentation/Guides (keep locally but don't commit)
+DEPLOYMENT_GUIDE.md
+TEST_GITHUB_ACTION.md
+GITHUB_DEPLOYMENT.md

@@ -1,0 +1,38 @@
+name: Test JOE Scraper
+
+on:
+  workflow_dispatch:  # Manual trigger only
+
+jobs:
+  test-scraper:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+    
+    - name: Install Chrome
+      uses: browser-actions/setup-chrome@latest
+    
+    - name: Verify Chrome installation
+      run: |
+        chrome --version
+        which chrome
+    
+    - name: Install dependencies
+      run: |
+        pip install selenium pandas openpyxl matplotlib
+        pip install webdriver-manager
+    
+    - name: Test scraper
+      run: |
+        python joe_working_scraper.py --test --headless
+    
+    - name: Check if file was downloaded
+      run: |
+        ls -la joe_data/scraped/
+        echo "Test completed successfully!"
