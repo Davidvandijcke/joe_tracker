@@ -1,0 +1,50 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.env
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.claude/
+
+# Temporary files
+*.log
+*.tmp
+temp/
+tmp/
+
+# Test files
+test_*.py
+*_test.py
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# Data files (except scraped Excel files)
+*.json
+!docs/joe_data.json
+*.csv
+*.html
+!docs/index.html
+*.png
+*.jpg
+*.jpeg
+
+# Downloads
+downloads/
+download_*.py
