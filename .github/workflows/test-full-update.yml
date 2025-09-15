@@ -58,7 +58,11 @@ jobs:
       run: |
         git config --global user.email "action@github.com"
         git config --global user.name "GitHub Action"
-        git add -A
+
+        # Add only data and docs, not workflows
+        git add joe_data/
+        git add docs/
+        git add *.csv 2>/dev/null || true
 
         # Check if there are changes to commit
         if git diff --staged --quiet; then
