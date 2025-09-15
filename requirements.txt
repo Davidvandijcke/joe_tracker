@@ -1,0 +1,25 @@
+# Core dependencies
+pandas>=2.0.0
+numpy>=1.24.0
+matplotlib>=3.6.0
+
+# Web scraping
+selenium>=4.15.0
+beautifulsoup4>=4.12.0
+requests>=2.31.0
+
+# Web application
+streamlit>=1.28.0
+plotly>=5.17.0
+
+# Scheduling
+schedule>=1.2.0
+
+# Utilities
+python-dotenv>=1.0.0
+openpyxl>=3.1.0  # For Excel file handling
+xlrd>=2.0.0  # For reading older Excel formats
+
+# Optional for production deployment
+gunicorn>=21.2.0  # For serving the web app
+redis>=5.0.0  # For caching/job queue (optional)
