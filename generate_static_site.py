@@ -21,12 +21,28 @@ def generate_data_json():
     """Generate JSON data file from Excel sources."""
     # Process data
     df = process_xls_files()
+
+    # Handle empty DataFrame
+    if df.empty:
+        print("No data files found. Creating empty dataset.")
+        return {
+            'metadata': {
+                'last_update': datetime.now().isoformat(),
+                'total_postings': 0,
+                'date_range': {
+                    'start': None,
+                    'end': None
+                }
+            },
+            'sections': {}
+        }
+
     df = analyze_date_fields(df)
-    
+
     # For 2019-2024, we only have US Academic data
     # For 2025, we have all sections
     # So we'll create an "all_sections" view that combines available data
-    
+
     sections_data = {}
     
     # Process US Academic (all years have this)

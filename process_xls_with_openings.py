@@ -107,6 +107,10 @@ def process_xls_files():
         print(f"  Postings: {len(df)}")
     
     # Combine all data
+    if not all_data:
+        print("WARNING: No data files found. Returning empty DataFrame.")
+        return pd.DataFrame()
+
     full_df = pd.concat(all_data, ignore_index=True)
     print(f"\nTotal postings across all files: {len(full_df)}")
     

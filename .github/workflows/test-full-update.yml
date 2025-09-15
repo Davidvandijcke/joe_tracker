@@ -28,6 +28,12 @@ jobs:
         pip install selenium pandas openpyxl matplotlib
         pip install webdriver-manager
 
+    - name: Create directory structure
+      run: |
+        mkdir -p joe_data/scraped/temp
+        mkdir -p docs
+        echo "Directory structure created"
+
     - name: Run scraper for current year
       run: |
         echo "Downloading current year data with ALL sections..."
