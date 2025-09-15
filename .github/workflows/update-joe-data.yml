@@ -9,7 +9,10 @@ on:
 jobs:
   update-data:
     runs-on: ubuntu-latest
-    
+
+    permissions:
+      contents: write  # Needed to commit and push changes
+
     steps:
     - uses: actions/checkout@v3
     

@@ -6,7 +6,10 @@ on:
 jobs:
   test-scraper:
     runs-on: ubuntu-latest
-    
+
+    permissions:
+      contents: write  # Needed to commit and push changes
+
     steps:
     - uses: actions/checkout@v3
     
@@ -31,8 +34,19 @@ jobs:
     - name: Test scraper
       run: |
         python joe_working_scraper.py --test --headless
-    
+
     - name: Check if file was downloaded
       run: |
         ls -la joe_data/scraped/
-        echo "Test completed successfully!"
+        echo "Download completed successfully!"
+
+    - name: Generate static site
+      run: |
+        python generate_static_site.py
+
+    - name: Commit and push if changed
+      run: |
+        git config --global user.email "action@github.com"
+        git config --global user.name "GitHub Action"
+        git add -A
+        git diff --quiet && git diff --staged --quiet || (git commit -m "Test scraper: Update JOE data" && git push)
