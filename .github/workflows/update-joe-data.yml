@@ -9,10 +9,7 @@ on:
 jobs:
   update-data:
     runs-on: ubuntu-latest
-
-    permissions:
-      contents: write  # Needed to commit and push changes
-
+    
     steps:
     - uses: actions/checkout@v3
     
@@ -28,15 +25,9 @@ jobs:
       run: |
         pip install selenium pandas openpyxl matplotlib
         pip install webdriver-manager
-
-    - name: Create directory structure
-      run: |
-        mkdir -p joe_data/scraped/temp
-        mkdir -p docs
-
+    
     - name: Run scraper
       run: |
-        # Downloads current year with ALL sections in one file
         python joe_working_scraper.py --years 1 --headless
     
     - name: Generate static site
@@ -47,10 +38,5 @@ jobs:
       run: |
         git config --global user.email "action@github.com"
         git config --global user.name "GitHub Action"
-
-        # Add only data and docs, not workflows
-        git add joe_data/
-        git add docs/
-        git add *.csv 2>/dev/null || true
-
+        git add -A
         git diff --quiet && git diff --staged --quiet || (git commit -m "Auto-update JOE data" && git push)
