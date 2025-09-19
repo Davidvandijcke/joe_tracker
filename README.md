@@ -1,6 +1,6 @@
 # JOE Market Tracker
 
-Live site: https://davidvandijcke.com/joe-tracker/
+Live site: https://davidvandijcke.com/joe_tracker/
 
 This repository automatically tracks job openings for economists from the AEA JOE website.
 
