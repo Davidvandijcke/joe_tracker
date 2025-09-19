@@ -46,8 +46,8 @@ jobs:
 
     - name: Generate static site
       run: |
-        echo "Regenerating static site..."
-        python generate_static_site.py
+        echo "Updating current year data..."
+        python update_current_year.py
 
     - name: Show what will be committed
       run: |
