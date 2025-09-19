@@ -688,7 +688,7 @@ def main():
     # Create README for GitHub
     readme = """# JOE Market Tracker
 
-Live site: https://yourusername.github.io/joe-tracker/
+Live site: https://davidvandijcke.com/joe_tracker/
 
 This repository automatically tracks job openings for economists from the AEA JOE website.
 
