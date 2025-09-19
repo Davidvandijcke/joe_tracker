@@ -48,8 +48,15 @@ jobs:
         # Check if there are changes
         if ! git diff --quiet || ! git diff --staged --quiet; then
           git commit -m "Auto-update JOE data"
+
+          # Stash any unstaged changes
+          git stash --include-untracked
+
           git rebase origin/main
           git push origin HEAD:main
+
+          # Clean up stash
+          git stash drop || true
         else
           echo "No changes to commit"
         fi

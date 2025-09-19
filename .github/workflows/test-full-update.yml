@@ -74,10 +74,16 @@ jobs:
           # Commit our changes
           git commit -m "Test update: JOE data $(date +'%Y-%m-%d %H:%M')"
 
+          # Stash any unstaged changes (like .pyc files, temp files, etc.)
+          git stash --include-untracked
+
           # Now rebase on top of the latest main
           git rebase origin/main
 
           # Push changes
           git push origin HEAD:main
           echo "Changes committed and pushed successfully!"
+
+          # Clean up stash
+          git stash drop || true
         fi
