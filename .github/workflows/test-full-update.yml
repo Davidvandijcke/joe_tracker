@@ -69,6 +69,11 @@ jobs:
           echo "No changes to commit"
         else
           git commit -m "Test update: JOE data $(date +'%Y-%m-%d %H:%M')"
+
+          # Pull latest changes and rebase to avoid conflicts
+          git pull --rebase origin main
+
+          # Push changes
           git push
           echo "Changes committed and pushed successfully!"
         fi
