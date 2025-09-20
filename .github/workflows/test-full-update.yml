@@ -34,6 +34,12 @@ jobs:
         mkdir -p docs
         echo "Directory structure created"
 
+    - name: Download existing data file
+      run: |
+        echo "Downloading existing joe_data.json from GitHub Pages..."
+        curl -sL https://davidvandijcke.com/joe_tracker/joe_data.json -o docs/joe_data.json || echo '{"metadata":{"total_postings":0},"sections":{}}' > docs/joe_data.json
+        echo "Existing data file size: $(wc -c < docs/joe_data.json) bytes"
+
     - name: Run scraper for current year
       run: |
         echo "Downloading current year data with ALL sections..."
