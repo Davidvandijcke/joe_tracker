@@ -44,33 +44,102 @@ def generate_data_json():
     # So we'll create an "all_sections" view that combines available data
 
     sections_data = {}
-    
-    # Process US Academic (all years have this)
-    us_academic_df = df[df['jp_section'].str.contains('US: Full-Time Academic', na=False, case=False)]
-    if len(us_academic_df) > 0:
-        weekly_data = create_weekly_cumulative(us_academic_df)
+
+    # Define all section mappings based on exact jp_section values
+    section_mappings = {
+        'us_academic': 'US: Full-Time Academic (Permanent, Tenure Track or Tenured)',
+        'us_other_visiting': 'US: Other Academic (Visiting or Temporary)',
+        'us_other_parttime': 'US: Other Academic (Part-time or Adjunct)',
+        'intl_academic': 'International: Full-Time Academic (Permanent, Tenure Track or Tenured)',
+        'intl_other_visiting': 'International: Other Academic (Visiting or Temporary)',
+        'intl_other_parttime': 'International: Other Academic (Part-time or Adjunct)',
+        'nonacademic': 'Full-Time Nonacademic',
+        'other_nonacademic': 'Other Nonacademic (Temporary, Part-Time, Non-Salaried, Consulting, Etc.)'
+    }
+
+    # Process each section
+    for section_key, section_name in section_mappings.items():
+        # Filter for exact match
+        section_df = df[df['jp_section'] == section_name]
+        if len(section_df) > 0:
+            weekly_data = create_weekly_cumulative(section_df)
+            section_json = {}
+            for year, data in weekly_data.items():
+                # For current year, truncate at last available week
+                weeks = [int(w) for w in data['weeks']]
+                cumulative = [int(c) for c in data['cumulative']]
+
+                # If 2025/current year, find last week with data
+                if year == 2025 and len(weeks) > 0:
+                    # Find last non-zero increment
+                    for i in range(len(cumulative) - 1, 0, -1):
+                        if cumulative[i] > cumulative[i-1]:
+                            weeks = weeks[:i+1]
+                            cumulative = cumulative[:i+1]
+                            break
+
+                section_json[str(year)] = {
+                    'weeks': weeks,
+                    'cumulative': cumulative,
+                    'total': int(data['total']),
+                    'postings': int(data['postings'])
+                }
+            sections_data[section_key] = section_json
+
+    # Create combined "Other Academic" sections
+    # US: Other Academic (all combined)
+    us_other_all_df = df[df['jp_section'].isin([
+        'US: Other Academic (Visiting or Temporary)',
+        'US: Other Academic (Part-time or Adjunct)'
+    ])]
+    if len(us_other_all_df) > 0:
+        weekly_data = create_weekly_cumulative(us_other_all_df)
         section_json = {}
         for year, data in weekly_data.items():
-            # For current year, truncate at last available week
             weeks = [int(w) for w in data['weeks']]
             cumulative = [int(c) for c in data['cumulative']]
-            
-            # If 2025/current year, find last week with data
+
             if year == 2025 and len(weeks) > 0:
-                # Find last non-zero increment
                 for i in range(len(cumulative) - 1, 0, -1):
                     if cumulative[i] > cumulative[i-1]:
                         weeks = weeks[:i+1]
                         cumulative = cumulative[:i+1]
                         break
-            
+
             section_json[str(year)] = {
                 'weeks': weeks,
                 'cumulative': cumulative,
                 'total': int(data['total']),
                 'postings': int(data['postings'])
             }
-        sections_data['us_academic'] = section_json
+        sections_data['us_other_all'] = section_json
+
+    # International: Other Academic (all combined)
+    intl_other_all_df = df[df['jp_section'].isin([
+        'International: Other Academic (Visiting or Temporary)',
+        'International: Other Academic (Part-time or Adjunct)'
+    ])]
+    if len(intl_other_all_df) > 0:
+        weekly_data = create_weekly_cumulative(intl_other_all_df)
+        section_json = {}
+        for year, data in weekly_data.items():
+            weeks = [int(w) for w in data['weeks']]
+            cumulative = [int(c) for c in data['cumulative']]
+
+            if year == 2025 and len(weeks) > 0:
+                for i in range(len(cumulative) - 1, 0, -1):
+                    if cumulative[i] > cumulative[i-1]:
+                        weeks = weeks[:i+1]
+                        cumulative = cumulative[:i+1]
+                        break
+
+            section_json[str(year)] = {
+                'weeks': weeks,
+                'cumulative': cumulative,
+                'total': int(data['total']),
+                'postings': int(data['postings'])
+            }
+        sections_data['intl_other_all'] = section_json
     
     # For "all sections" view - combine all available data per year
     all_sections_data = {}
@@ -98,37 +167,6 @@ def generate_data_json():
                 'postings': int(data['postings'])
             }
     sections_data['all_sections'] = all_sections_data
-    
-    # Process other sections (only 2025 has these)
-    other_sections = {
-        'intl_academic': 'International: Full-Time Academic',
-        'nonacademic': 'Nonacademic'
-    }
-    
-    for section_key, section_filter in other_sections.items():
-        section_df = df[df['jp_section'].str.contains(section_filter, na=False, case=False)]
-        if len(section_df) > 0:
-            weekly_data = create_weekly_cumulative(section_df)
-            section_json = {}
-            for year, data in weekly_data.items():
-                weeks = [int(w) for w in data['weeks']]
-                cumulative = [int(c) for c in data['cumulative']]
-                
-                # Truncate at last data point
-                if len(weeks) > 0:
-                    for i in range(len(cumulative) - 1, 0, -1):
-                        if cumulative[i] > cumulative[i-1]:
-                            weeks = weeks[:i+1]
-                            cumulative = cumulative[:i+1]
-                            break
-                
-                section_json[str(year)] = {
-                    'weeks': weeks,
-                    'cumulative': cumulative,
-                    'total': int(data['total']),
-                    'postings': int(data['postings'])
-                }
-            sections_data[section_key] = section_json
     
     # Add metadata
     metadata = {

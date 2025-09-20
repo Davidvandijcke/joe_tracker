@@ -9,14 +9,9 @@ on:
 jobs:
   update-data:
     runs-on: ubuntu-latest
-
-    permissions:
-      contents: write  # Explicitly grant write permission
-
+    
     steps:
     - uses: actions/checkout@v3
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
     
     - name: Set up Python
       uses: actions/setup-python@v4
@@ -30,69 +25,18 @@ jobs:
       run: |
         pip install selenium pandas openpyxl matplotlib
         pip install webdriver-manager
-
-    - name: Create directory structure
+    
+    - name: Run scraper
       run: |
-        mkdir -p joe_data/scraped/temp
-        mkdir -p docs
-        echo "Directory structure created"
-
-    - name: Download existing data file
-      run: |
-        echo "Downloading existing joe_data.json from GitHub Pages..."
-        curl -sL https://davidvandijcke.com/joe_tracker/joe_data.json -o docs/joe_data.json || echo '{"metadata":{"total_postings":0},"sections":{}}' > docs/joe_data.json
-        echo "Existing data file size: $(wc -c < docs/joe_data.json) bytes"
-
-    - name: Run scraper for current year
-      run: |
-        echo "Downloading current year data with ALL sections..."
         python joe_working_scraper.py --years 1 --headless
-
-    - name: List downloaded files
-      run: |
-        echo "Files in joe_data/scraped/:"
-        ls -la joe_data/scraped/
-
+    
     - name: Generate static site
       run: |
-        echo "Updating current year data..."
-        python update_current_year.py
+        python generate_static_site.py
     
-    - name: Show what will be committed
-      run: |
-        git status
-        git diff --stat
-
-    - name: Commit and push changes
+    - name: Commit and push if changed
       run: |
         git config --global user.email "action@github.com"
         git config --global user.name "GitHub Action"
-
-        # First, fetch the latest changes
-        git fetch origin main
-
-        # Add only data and docs, not workflows
-        git add joe_data/
-        git add docs/
-        git add *.csv 2>/dev/null || true
-
-        # Check if there are changes to commit
-        if git diff --staged --quiet; then
-          echo "No changes to commit"
-        else
-          # Commit our changes
-          git commit -m "Auto-update: JOE data $(date +'%Y-%m-%d %H:%M')"
-
-          # Stash any unstaged changes (like .pyc files, temp files, etc.)
-          git stash --include-untracked
-
-          # Now rebase on top of the latest main
-          git rebase origin/main
-
-          # Push changes
-          git push origin HEAD:main
-          echo "Changes committed and pushed successfully!"
-
-          # Clean up stash
-          git stash drop || true
-        fi
+        git add -A
+        git diff --quiet && git diff --staged --quiet || (git commit -m "Auto-update JOE data" && git push)
