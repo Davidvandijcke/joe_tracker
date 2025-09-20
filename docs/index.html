@@ -268,32 +268,48 @@
             });
         
         function initializeApp() {
-            // Display update info
-            const updateDate = new Date(jobData.metadata.last_update);
-            document.getElementById('updateInfo').textContent = 
-                `Last updated: ${updateDate.toLocaleDateString()} at ${updateDate.toLocaleTimeString()}`;
-            
-            // Create year selectors
-            const yearSelector = document.getElementById('yearSelector');
-            const availableYears = new Set();
-            
-            Object.values(jobData.sections).forEach(section => {
-                Object.keys(section).forEach(year => availableYears.add(parseInt(year)));
-            });
-            
-            Array.from(availableYears).sort().forEach(year => {
-                const btn = document.createElement('button');
-                btn.className = 'year-btn';
-                btn.textContent = year;
-                btn.dataset.year = year;
-                
-                if (selectedYears.includes(year)) {
-                    btn.classList.add('active');
+            try {
+                // Display update info
+                const updateDate = new Date(jobData.metadata.last_update);
+                document.getElementById('updateInfo').textContent =
+                    `Last updated: ${updateDate.toLocaleDateString()} at ${updateDate.toLocaleTimeString()}`;
+
+                // Create year selectors
+                const yearSelector = document.getElementById('yearSelector');
+                if (!yearSelector) {
+                    console.error('yearSelector element not found');
+                    return;
                 }
-                
-                btn.onclick = () => toggleYear(year);
-                yearSelector.appendChild(btn);
-            });
+
+                // Clear existing buttons first
+                yearSelector.innerHTML = '';
+
+                const availableYears = new Set();
+
+                Object.values(jobData.sections).forEach(section => {
+                    Object.keys(section).forEach(year => availableYears.add(parseInt(year)));
+                });
+
+                console.log('Available years:', Array.from(availableYears));
+
+                Array.from(availableYears).sort().forEach(year => {
+                    const btn = document.createElement('button');
+                    btn.className = 'year-btn';
+                    btn.textContent = year;
+                    btn.dataset.year = year;
+
+                    if (selectedYears.includes(year)) {
+                        btn.classList.add('active');
+                    }
+
+                    btn.onclick = () => toggleYear(year);
+                    yearSelector.appendChild(btn);
+                });
+
+                console.log('Created', yearSelector.children.length, 'year buttons');
+            } catch (error) {
+                console.error('Error in initializeApp:', error);
+            }
             
             // Add section selector listener
             document.getElementById('sectionSelector').onchange = (e) => {
