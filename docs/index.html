@@ -290,8 +290,6 @@
                     Object.keys(section).forEach(year => availableYears.add(parseInt(year)));
                 });
 
-                console.log('Available years:', Array.from(availableYears));
-
                 Array.from(availableYears).sort().forEach(year => {
                     const btn = document.createElement('button');
                     btn.className = 'year-btn';
@@ -305,8 +303,6 @@
                     btn.onclick = () => toggleYear(year);
                     yearSelector.appendChild(btn);
                 });
-
-                console.log('Created', yearSelector.children.length, 'year buttons');
             } catch (error) {
                 console.error('Error in initializeApp:', error);
             }
