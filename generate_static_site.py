@@ -404,10 +404,17 @@ def generate_html():
             <div class="control-group">
                 <label>Select Section</label>
                 <select id="sectionSelector">
-                    <option value="all_sections">All Sections</option>
-                    <option value="us_academic">US: Full-Time Academic</option>
-                    <option value="intl_academic">International: Full-Time Academic</option>
-                    <option value="nonacademic">Nonacademic</option>
+                    <option value="all_sections">Show All</option>
+                    <option value="us_academic">US: Full-Time Academic (Permanent, Tenure Track or Tenured)</option>
+                    <option value="us_other_visiting">US: Other Academic (Visiting or Temporary)</option>
+                    <option value="us_other_parttime">US: Other Academic (Part-time or Adjunct)</option>
+                    <option value="us_other_all">US: Other Academic (Temporary, Adjunct, Visiting, Part-Time)</option>
+                    <option value="intl_academic">International: Full-Time Academic (Permanent, Tenure Track or Tenured)</option>
+                    <option value="intl_other_visiting">International: Other Academic (Visiting or Temporary)</option>
+                    <option value="intl_other_parttime">International: Other Academic (Part-time or Adjunct)</option>
+                    <option value="intl_other_all">International: Other Academic (Temporary, Adjunct, Visiting, Part-Time)</option>
+                    <option value="nonacademic">Full-Time Nonacademic</option>
+                    <option value="other_nonacademic">Other Nonacademic (Temporary, Part-Time, Non-Salaried, Consulting, Etc.)</option>
                 </select>
             </div>
         </div>
