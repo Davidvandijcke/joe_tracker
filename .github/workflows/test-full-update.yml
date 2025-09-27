@@ -34,11 +34,16 @@ jobs:
         mkdir -p docs
         echo "Directory structure created"
 
-    - name: Download existing data file
+    - name: Use backup data file
       run: |
-        echo "Downloading existing joe_data.json from GitHub Pages..."
-        curl -sL https://davidvandijcke.com/joe_tracker/joe_data.json -o docs/joe_data.json || echo '{"metadata":{"total_postings":0},"sections":{}}' > docs/joe_data.json
-        echo "Existing data file size: $(wc -c < docs/joe_data.json) bytes"
+        echo "Using backup data from repository..."
+        if [ -f data_backup/joe_data_backup.json ]; then
+          cp data_backup/joe_data_backup.json docs/joe_data.json
+          echo "Copied backup data file, size: $(wc -c < docs/joe_data.json) bytes"
+        else
+          echo "Warning: No backup file found, creating empty structure"
+          echo '{"metadata":{"total_postings":0},"sections":{}}' > docs/joe_data.json
+        fi
 
     - name: Run scraper for current year
       run: |
@@ -55,6 +60,11 @@ jobs:
         echo "Updating current year data..."
         python update_current_year.py
 
+    - name: Update backup file
+      run: |
+        echo "Updating backup file with new data..."
+        cp docs/joe_data.json data_backup/joe_data_backup.json
+
     - name: Show what will be committed
       run: |
         git status
@@ -68,9 +78,10 @@ jobs:
         # First, fetch the latest changes
         git fetch origin main
 
-        # Add only data and docs, not workflows
+        # Add data files
         git add joe_data/
         git add docs/
+        git add data_backup/
         git add *.csv 2>/dev/null || true
 
         # Check if there are changes to commit
