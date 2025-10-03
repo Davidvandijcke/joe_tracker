@@ -9,34 +9,101 @@ on:
 jobs:
   update-data:
     runs-on: ubuntu-latest
-    
+
+    permissions:
+      contents: write  # Explicitly grant write permission
+
     steps:
     - uses: actions/checkout@v3
-    
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.9'
-    
+
     - name: Install Chrome
       uses: browser-actions/setup-chrome@latest
-    
+
     - name: Install dependencies
       run: |
         pip install selenium pandas openpyxl matplotlib
         pip install webdriver-manager
-    
-    - name: Run scraper
+
+    - name: Create directory structure
       run: |
+        mkdir -p joe_data/scraped/temp
+        mkdir -p docs
+        echo "Directory structure created"
+
+    - name: Use backup data file
+      run: |
+        echo "Using backup data from repository..."
+        if [ -f data_backup/joe_data_backup.json ]; then
+          cp data_backup/joe_data_backup.json docs/joe_data.json
+          echo "Copied backup data file, size: $(wc -c < docs/joe_data.json) bytes"
+        else
+          echo "Warning: No backup file found, creating empty structure"
+          echo '{"metadata":{"total_postings":0},"sections":{}}' > docs/joe_data.json
+        fi
+
+    - name: Run scraper for current year
+      run: |
+        echo "Downloading current year data with ALL sections..."
         python joe_working_scraper.py --years 1 --headless
-    
+
+    - name: List downloaded files
+      run: |
+        echo "Files in joe_data/scraped/:"
+        ls -la joe_data/scraped/
+
     - name: Generate static site
       run: |
-        python generate_static_site.py
-    
-    - name: Commit and push if changed
+        echo "Updating current year data..."
+        python update_current_year.py
+
+    - name: Update backup file
+      run: |
+        echo "Updating backup file with new data..."
+        cp docs/joe_data.json data_backup/joe_data_backup.json
+
+    - name: Show what will be committed
+      run: |
+        git status
+        git diff --stat
+
+    - name: Commit and push changes
       run: |
         git config --global user.email "action@github.com"
         git config --global user.name "GitHub Action"
-        git add -A
-        git diff --quiet && git diff --staged --quiet || (git commit -m "Auto-update JOE data" && git push)
+
+        # First, fetch the latest changes
+        git fetch origin main
+
+        # Add data files
+        git add joe_data/
+        git add docs/
+        git add data_backup/
+        git add *.csv 2>/dev/null || true
+
+        # Check if there are changes to commit
+        if git diff --staged --quiet; then
+          echo "No changes to commit"
+        else
+          # Commit our changes
+          git commit -m "Auto-update: JOE data $(date +'%Y-%m-%d %H:%M')"
+
+          # Stash any unstaged changes
+          git stash --include-untracked
+
+          # Rebase on latest main
+          git rebase origin/main
+
+          # Push changes
+          git push origin HEAD:main
+          echo "Changes committed and pushed successfully!"
+
+          # Clean up stash
+          git stash drop || true
+        fi
