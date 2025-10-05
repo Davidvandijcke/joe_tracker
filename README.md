@@ -8,7 +8,7 @@ This repository automatically tracks job openings for economists from the AEA JO
 - Weekly automatic updates every Friday at 5pm EST
 - Interactive visualizations
 - Year and section filtering
-- Historical data from 2019-present
+- Historical data from 2015-present
 
 ## Setup
 1. Fork this repository

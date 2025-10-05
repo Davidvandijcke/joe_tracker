@@ -37,6 +37,11 @@ class JOEWorkingScraper:
         "August 1, 2021 – January 31, 2022",
         "August 1, 2020 – January 31, 2021",
         "August 1, 2019 – January 31, 2020",
+        "August 1, 2018 – January 31, 2019",
+        "August 1, 2017 – January 31, 2018",
+        "August 1, 2016 – January 31, 2017",
+        "August 1, 2015 – January 31, 2016",
+        "August 1, 2014 – January 31, 2015",
     ]
     
     # Section mappings (value attribute -> text)
