@@ -251,20 +251,21 @@
         let selectedYears = [2023, 2024, 2025];
         let selectedSection = 'all_sections';
 
-        // Continuous color scale from cool (older) to warm (recent) colors
+        // Continuous color scale with high contrast between adjacent years
+        // Progresses from cool (blue) through green, yellow, to warm (red-orange)
         const colors = {
-            2015: '#1a237e',  // Deep indigo
-            2016: '#283593',  // Indigo
-            2017: '#3949ab',  // Medium indigo
-            2018: '#5e35b1',  // Deep purple
-            2019: '#7b1fa2',  // Purple
-            2020: '#ad1457',  // Deep pink
-            2021: '#c62828',  // Deep red
-            2022: '#d84315',  // Red-orange
-            2023: '#ef6c00',  // Orange
-            2024: '#f57c00',  // Light orange
-            2025: '#ff8f00',  // Amber
-            2026: '#ffa726'   // Light amber
+            2015: '#1f77b4',  // Blue
+            2016: '#17becf',  // Cyan
+            2017: '#2ca02c',  // Green
+            2018: '#98df8a',  // Light green
+            2019: '#bcbd22',  // Yellow-green
+            2020: '#d4c900',  // Yellow
+            2021: '#ff7f0e',  // Orange
+            2022: '#ff6347',  // Tomato
+            2023: '#e15759',  // Red
+            2024: '#d62728',  // Deep red
+            2025: '#9467bd',  // Purple
+            2026: '#c5b0d5'   // Light purple
         };
         
         // Load data
